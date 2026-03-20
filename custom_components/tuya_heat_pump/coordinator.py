@@ -153,7 +153,7 @@ class TuyaScaleDataUpdateCoordinator(DataUpdateCoordinator):
         """Loop to receive instant data from the device."""
         while True:
             try:
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(1.0)
                 data = await self.hass.async_add_executor_job(self.local_device.receive)
                 if data and 'dps' in data:
                     _LOGGER.debug("Instant update received: %s", data['dps'])
@@ -161,7 +161,7 @@ class TuyaScaleDataUpdateCoordinator(DataUpdateCoordinator):
                     if new_data:
                         self._apply_sent_cache(new_data)
                         self.async_set_updated_data(new_data)
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(1.0)
             except Exception as err:
                 _LOGGER.error("Error in listener loop: %s. Retrying in 5s...", err)
                 await asyncio.sleep(5)
@@ -614,13 +614,13 @@ class TuyaScaleDataUpdateCoordinator(DataUpdateCoordinator):
                 status = await self.hass.async_add_executor_job(self.local_device.status)
               
                 if not status or 'dps' not in status:
-                    _LOGGER.warning("No 'dps' in status response - retrying once")
+                    _LOGGER.warning("No 'dps' in status response. Status: %s. Retrying once", status)
                     await asyncio.sleep(1.0)
                     status = await self.hass.async_add_executor_job(self.local_device.status)
-                  
+
                     if not status or 'dps' not in status:
                         self.is_online = False
-                        _LOGGER.info("Online status değişti: OFFLINE (local status başarısız)")
+                        _LOGGER.error("No 'dps' in local status response after retry. Status: %s", status)
                         self.async_update_listeners()
                         raise UpdateFailed("No 'dps' in local status response after retry")
               
