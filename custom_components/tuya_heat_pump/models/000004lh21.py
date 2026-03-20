@@ -114,7 +114,7 @@ SENSOR_TYPES = {
         "name": "Flow Rate",
         "unit": "m³/h",
         "icon": "mdi:gauge",
-        "device_class": None,  # Fixed: pressure yerine None
+        "device_class": "volume_flow_rate",
         "state_class": "measurement",        
         "conversion": "value / 10"
     },
